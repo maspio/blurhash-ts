@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "strict": true,
+    "sourceMap": true,
+    "target": "ES2020",
+    "module": "ESNext",
+    "lib": ["ES2020", "DOM"],
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "Node",
+    "noImplicitAny": true
+  },
+  "include": ["src/**/*.ts", "scripts/**/*.ts"],
+  "exclude": ["node_modules"]
+}

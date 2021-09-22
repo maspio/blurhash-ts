@@ -1,0 +1,54 @@
+{
+  "name": "@picibird/blurhash-ts",
+  "version": "1.1.4",
+  "description": "Encoder and decoder for the Wolt BlurHash algorithm.",
+  "keywords": [
+    "blurhash",
+    "blur",
+    "hash",
+    "image"
+  ],
+  "homepage": "http://blurhash.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/woltapp/blurhash/tree/master/TypeScript"
+  },
+  "license": "MIT",
+  "author": "omahlama",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs"
+    },
+    "./encode": {
+      "import": "./dist/encode.mjs"
+    },
+    "./decode": {
+      "import": "./dist/decode.mjs"
+    }
+  },
+  "main": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist/**/*",
+    "dist/index.d.ts",
+    "!**/*.map"
+  ],
+  "scripts": {
+    "prepublishOnly": "npm run build",
+    "build": "siroc build",
+    "postbuild": "npm run minify",
+    "minify": "jiti scripts/minify.ts",
+    "prettier": "prettier src/**/*.ts",
+    "prettier-fix": "npm run prettier -- --write",
+    "scripts": "siroc build -i scripts/minify.ts -o scripts/minify.mjs -f es"
+  },
+  "devDependencies": {
+    "prettier": "^2.4.1",
+    "siroc": "^0.16.0",
+    "terser": "^5.9.0"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}
