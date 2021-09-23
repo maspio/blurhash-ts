@@ -11,9 +11,16 @@ const writeFile = (p: string, text: string) =>
 const parentDir = (p: string) => path.normalize(path.join(p, ".."));
 
 const toMinFileName = (filePath: string) => {
-  const extension = pathy.fileExtension(filePath);
-  const name = pathy.fileName(filePath);
+  const extension = fileExtension(filePath);
+  const name = fileName(filePath);
   return `${name}.min.${extension}`;
+};
+
+const prependFileExtension = (p: string, prepend: string) => {
+  const ext = fileExtension(p);
+  const name = fileName(p);
+  const dir = path.dirname(p);
+  return path.join(dir, `${name}.${prepend}.${ext}`);
 };
 
 const toMinFilePath = (p: string) => {
@@ -30,4 +37,5 @@ export const pathy = {
   parentDir,
   toMinFileName,
   toMinFilePath,
+  prependFileExtension,
 };

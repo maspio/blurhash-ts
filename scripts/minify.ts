@@ -2,7 +2,14 @@ import { minify, MinifyOptions, ECMA } from "terser";
 
 import { pathy } from "./file";
 
-const files = ["dist/decode.mjs", "dist/encode.mjs", "dist/index.mjs"];
+const files = [
+  "dist/index.mjs",
+  "dist/decode.mjs",
+  // "dist/encode.mjs",
+  // "dist/decode.js",
+  // "dist/encode.js",
+  // "dist/index.js",
+];
 
 type MinOpts = {
   module: boolean;
@@ -19,35 +26,35 @@ const DefaultMinOpts: MinOpts = {
 };
 
 const createMinifyOptions = (
-  opts: MinOpts = DefaultMinOpts
-): MinifyOptions => ({
-  module: opts.module,
-  mangle: opts.mangle,
-  format: opts.extreme ? { comments: false } : undefined,
-  compress: {
-    passes: 2,
-    unsafe: opts.extreme,
-    unused: opts.extreme,
-    side_effects: false,
-  },
-  ecma: opts.ecma,
-});
+  options: Partial<MinOpts> = DefaultMinOpts
+): MinifyOptions => {
+  const opts = { ...options, ...DefaultMinOpts };
+  return {
+    module: opts.module,
+    mangle: opts.mangle,
+    format: opts.extreme ? { comments: false } : undefined,
+    compress: {
+      passes: 2,
+      unsafe: opts.extreme || undefined,
+      unused: opts.extreme || undefined,
+      side_effects: false,
+    },
+    ecma: opts.ecma,
+  };
+};
 
-const options = createMinifyOptions();
+const log = (msg: string) => console.log(msg);
 
-const main = () => {
+const main = (extension: string, opts: MinifyOptions) => {
   return Promise.all(
     files.map((f) => {
       const input = pathy.normPath(f);
       const content = pathy.readFile(input);
-      const output = pathy.toMinFilePath(input);
-      return minify(content, options).then((minified) => {
+      const output = pathy.prependFileExtension(input, extension);
+      return minify(content, opts).then((minified) => {
         pathy.writeFile(output, minified.code!);
-        return {
-          input,
-          output,
-          minified,
-        };
+        log(`${pathy.toRelative(input)} => ${pathy.toRelative(output)}`);
+        return { input, output, minified };
       });
     })
   );
@@ -55,13 +62,10 @@ const main = () => {
 
 (async () => {
   try {
-    await main().then((rr) =>
-      rr.forEach((r) =>
-        console.log(
-          `${pathy.toRelative(r.input)} => ${pathy.toRelative(r.output)}`
-        )
-      )
-    );
+    await Promise.all([
+      main("min", createMinifyOptions()),
+      // main("minx", createMinifyOptions({ extreme: true })),
+    ]);
   } catch (e) {
     console.error("error", e);
   }
